@@ -1,0 +1,40 @@
+{
+  "name": "travel-planner",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Udacity FEND capstone",
+  "scripts": {
+    "test": "jest",
+    "start": "node src/server/index.js",
+    "build": "webpack --config webpack.prod.js && node src/server/index.js",
+    "dev": "webpack-dev-server --config webpack.dev.js --open firefox"
+  },
+  "author": "Luke Moyer",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "node": "^14.7.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "babel-loader": "^8.1.0",
+    "body-parser": "^1.19.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "cors": "^2.8.5",
+    "css-loader": "^4.2.0",
+    "dotenv": "^8.2.0",
+    "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.2.2",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-fetch": "^2.6.0",
+    "node-sass": "^4.14.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "sass-loader": "^9.0.2",
+    "style-loader": "^1.2.1",
+    "terser-webpack-plugin": "^4.0.0",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
