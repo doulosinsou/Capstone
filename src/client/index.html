@@ -23,7 +23,17 @@
                 <h2>1</h2>
                 <p>Pick a Location</p>
               </div>
-              
+              <form>
+                <label for="country">Country</label><br>
+                <select id="country" name="country">
+                  <option value="usa">USA</option>
+                  <option></option>
+                  <option></option>
+                  <option></option>
+                  <option></option>
+                </select>
+
+              </form>
             </section>
 
             <section id = "when">
@@ -31,6 +41,13 @@
                 <h2>2</h2>
                 <p>Pick a Time</p>
               </div>
+              <form>
+                <label for="date">When will you be ariving?</label>
+                <input id ="date" name = "date" type="date">
+                </input>
+                <label for "length">How Long will you be staying?</label>
+                <input id = "length" type="number"></input> days
+              </form>
             </section>
 
             <section id= "what">
@@ -38,10 +55,21 @@
                 <h2>3</h2>
                 <p>Back Your Bags</p>
               </div>
+              <div id="data-container">
+            </div>
+            <div id="list">
+              <form>
+                <label for="enter-list">Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
+                <input id="enter-list" name = "enter-list" type = "text"></input>
+                <button>Mark your Calendar!</button>
+
+              </form>
+            </div>
             </section>
           </div>
           <section id = "reservation">
-
+            <div id = "trip-details"></div>
+            <div id = "final-list"></div
           </section>
         </main>
 
