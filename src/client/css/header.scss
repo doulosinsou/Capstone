@@ -1,0 +1,52 @@
+$maindark: #283241;
+$orange1: #ff6c0e;
+$orange2: #ff900e;
+$gradient: linear-gradient(to right, $orange1, $orange2);
+
+header{
+  background-color: $maindark;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 30px;
+  border-bottom: 8px solid;
+  border-image-source: $gradient;
+  border-image-slice: 1;
+
+  > *{
+    display: inline-block;
+    padding: 30px 0;
+    text-align: center;
+  }
+  h1 {
+    font-size: 2em;
+  }
+  button{
+    background: $gradient;
+    padding: 10px;
+    border-radius: 8px;
+  }
+}
+
+@media screen and (min-width: 700px){
+  header {
+    flex-direction: row;
+
+    >* {
+      width: 30%;
+      padding: 50px 0;
+      text-align:inherit;
+    }
+
+    p{
+      text-align: center;
+    }
+
+    #button-container{
+      text-align:right;
+    }
+  }
+
+}

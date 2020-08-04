@@ -1,0 +1,51 @@
+$maindark: #283241;
+$orange1: #ff6c0e;
+$organe2: #ff900e;
+
+body {
+  color: $maindark;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+main {
+  flex: 2;
+
+
+  #form-container{
+    background-color: grey;
+    margin: 30px;
+    width: calc(100% - 60px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    section{
+      // margin: 10px;
+      border: medium solid $maindark;
+      padding: 30px;
+      text-align: center;
+
+      h2 {
+        font-size: 4em;
+        font-weight: bold;
+      }
+      p{
+        font-style: italic;
+      }
+    }
+  }
+}
+
+
+@media screen and (min-width:700px){
+  #form-container {
+    flex-direction: row;
+
+    section{
+      width: 30%;
+    }
+  }
+}
