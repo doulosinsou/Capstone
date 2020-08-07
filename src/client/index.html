@@ -29,9 +29,7 @@
                 <div id="relocate"></div>
               </form>
               <form id="refine">
-                <select>
-<option value="40.71427&amp;-74.00597">New York City New York, United States</option><option value="40.6501&amp;-73.94958">Brooklyn New York, United States</option><option value="40.75766&amp;-73.91327">New York-Northe... New York, United States</option><option value="40.68149&amp;-73.83652">Queens New York, United States</option><option value="42.65258&amp;-73.75623">Albany New York, United States</option>
-</select>
+
               </form>
             </section>
 
@@ -45,7 +43,8 @@
                 <input id ="date" name = "date" type="date">
                 </input>
                 <label for="length">How Long will you be staying?</label>
-                <input id = "length" type="number"></input> days
+                <input id = "length" type="number" placeholder="days"></input>
+                <button id="submitWhen">Go</button>
               </form>
             </section>
 
@@ -56,13 +55,24 @@
               </div>
               <div id="data-container">
             </div>
+            <div id="lookslike">
+            </div>
             <div id="list">
-              <form>
+              <form class="packlist">
                 <label for="enter-list">Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
-                <input id="enter-list" name = "enter-list" type = "text"></input>
-                <button>Mark your Calendar!</button>
-
+                <input name = "enter-list" type = "text"></input>
               </form>
+              <ul class="list">
+                <li class="sample">Lip Balm</li>
+                <li class="sample">Train Tickets</li>
+                <li class="sample">Rain Jacket</li>
+                <li class="sample">Sunscreen</li>
+              </ul>
+              <button>Remove All</button>
+            </div>
+              <label for="nameTrip">Name Your Trip</label>
+              <input id="nameTrip" name="nameTrip" type="text"></input>
+              <button id="finalize">Save Your Trip!</button>
             </div>
             </section>
           </div>

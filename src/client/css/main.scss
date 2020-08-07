@@ -40,10 +40,21 @@ main {
       }
       select{
         width: 100%;
-        
+
       }
     }
   }
+  .list{
+     li:not(.sample){
+       list-style-type: "- ";
+     }
+     li:not(.sample):hover{
+       list-style-type: "X ";
+       text-decoration: underline;
+       cursor: pointer;
+     }
+  }
+
 }
 
 
