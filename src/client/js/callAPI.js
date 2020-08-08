@@ -217,17 +217,20 @@ const fetchServer = async (path, data)=>{
 }
 
 document.getElementById('finalize').addEventListener("click",function(){
-  let saveWeather = [];
   let nameTrip = document.getElementById("nameTrip").value;
   if (nameTrip.value === ""){
-    nameTrip = "Trip to "+weatherData.data.city_name+"on "+stayDate.arrival;
+    nameTrip = "Trip to "+weatherData.city_name+"on "+stayDate.arrival;
   }
-  saveWeather = {
+  let saveWeather = {
     "weatherData":weatherData,
     "stayDate":stayDate,
     "weather":weather
   };
-  const trip = {nameTrip: saveWeather};
-  localStorage.setItem("trip", JSON.stringify(trip));
+
+  let alltrips = JSON.parse(localStorage.getItem("trip")) || [];
+
+  alltrips[nameTrip] = saveWeather;
+
+  localStorage.setItem("trip", JSON.stringify(alltrips));
   console.log(JSON.parse(localStorage.getItem("trip")));
 })
