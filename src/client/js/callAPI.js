@@ -216,11 +216,18 @@ const fetchServer = async (path, data)=>{
 
 }
 
-document.getElementById('finalize').addEventListener("click",function(){
+document.getElementById('finalize').addEventListener("click", async function(){
   let nameTrip = document.getElementById("nameTrip").value;
   if (nameTrip.value === ""){
     nameTrip = "Trip to "+weatherData.city_name+"on "+stayDate.arrival;
   }
+
+  const vacation = weatherData.city_name+"+"+weatherData.country_code;
+  const image = await fetchServer('/pixabay', vacation);
+  const dataCanvas = await Client.updatePage.dataCanvas(image);
+
+
+
   let saveWeather = {
     "weatherData":weatherData,
     "stayDate":stayDate,

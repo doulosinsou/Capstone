@@ -24,13 +24,14 @@ app.listen(3003, ()=>{
 
 app.get('/geoname', getGeoname)
 app.get('/Weatherbit', getWeather)
+app.get('/pixabay', getpicture)
 
 async function getGeoname(req, res){
   const api = "http://api.geonames.org/searchJSON?q=";
-  const cred = "&maxRows=5&countryBias=US&username="+process.env.Geoname;
+  const key = "&maxRows=5&countryBias=US&username="+process.env.Geoname;
   const loc = req.query.q;
-  console.log(api+loc+cred);
-  const call = await fetch(api+loc+cred);
+  console.log(api+loc+key);
+  const call = await fetch(api+loc+key);
   try {
     const response = await call.json();
     console.log(response.geonames)
@@ -47,11 +48,11 @@ async function getGeoname(req, res){
 
 async function getWeather(req, res){
   const api = "http://api.weatherbit.io/v2.0/forecast/daily?";
-  const cred = "key="+process.env.Weatherbit;
+  const key = "key="+process.env.Weatherbit;
   const loc = "&lat="+req.query.lat+"&lon="+req.query.lon;
   const units = "&units=i";
   // console.log(api+cred+loc);
-  const call = await fetch(api+cred+loc+units);
+  const call = await fetch(api+key+loc+units);
   try {
     const response = await call.json()
     console.log(response)
@@ -61,4 +62,34 @@ async function getWeather(req, res){
     console.log("call error: "+error)
   }
 
+}
+
+async function getpicture(req, res){
+  const api = "https://pixabay.com/api/";
+  const key ="?key="+process.env.Pixabay;
+  const params = "&safesearch=true&category=travel&image_type=photo&per_page=3";
+  const q = "&q="+req.query.q;
+  const def = "&q=vacation";
+
+  let call = await fetch(api+key+params+q);
+  try {
+    let response = await call.json()
+
+    if (response.total == "0"){
+      call = await fetch(api+key+params+def);
+      try {
+        console.log(call);
+        response = await call.json();
+        console.log(response);
+        res.send(response);
+      } catch(error){
+        console.log("default location error "+error);
+      }
+    } else{
+      console.log(response);
+      res.send(response);
+    }
+  } catch(error){
+    console.log("call error: "+error)
+  }
 }

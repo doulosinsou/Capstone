@@ -12,7 +12,7 @@
             <h1>Vacation Plans</h1>
             <p>Don't just make thoughts, make plans</p>
             <div id="button-container">
-              <button id="planBtn">Plan Your Trip</button>
+              <button class="main" id="planBtn">Plan Your Trip</button>
             </div>
         </header>
 
@@ -24,7 +24,7 @@
                 <p>Pick a Location</p>
               </div>
               <form onsubmit="Client.callAPI.search()">
-                <label for="location">City [country optional]</label><br>
+                <label for="location">City (country optional)</label><br>
                 <input type="text" id="location" name="location"></input>
                 <div id="relocate"></div>
               </form>
@@ -44,7 +44,7 @@
                 </input>
                 <label for="length">How Long will you be staying?</label>
                 <input id = "length" type="number" placeholder="days"></input>
-                <button id="submitWhen">Go</button>
+                <button class="main" id="submitWhen">Go</button>
               </form>
             </section>
 
@@ -54,7 +54,7 @@
                 <p>Back Your Bags</p>
               </div>
               <div id="data-container">
-            </div>
+
             <div id="lookslike">
             </div>
             <div id="list">
@@ -68,18 +68,53 @@
                 <li class="sample">Rain Jacket</li>
                 <li class="sample">Sunscreen</li>
               </ul>
-              <button>Remove All</button>
+              <button class="remove pass">Remove All</button>
             </div>
               <label for="nameTrip">Name Your Trip</label>
               <input id="nameTrip" name="nameTrip" type="text"></input>
-              <button id="finalize">Save Your Trip!</button>
+              <button class="main" id="finalize">Save Your Trip!</button>
             </div>
             </section>
           </div>
-          <section id = "reservation">
-            <div id = "trip-details"></div>
-            <div id = "final-list"></div
+
+          <section id = "trips">
+
+            <div class="trip-container">
+              <div class="cover-photo">
+                <img src="" alt="">
+                <a class="pix-credit" href="https://pixabay.com/"><img src="./img/pixabay_logo.png" alt="pixabay logo"></a>
+              </div>
+              <div class="details-container">
+                <h3>Trip Title</h3>
+                <div class="trip-details">
+                  <p><b>Where:</b> location.</p>
+                  <p><b>When:</b> Date - Date (x days).</p>
+                  <p><b>Weather:</b><br>
+                    <span>
+                      <i>Temp:</i>Degrees-Degress (plan for degrees)<br>
+                      <i>Humidity:</i>Percent-Percent (plan for percent)<br>
+                      <i>Precipitaion:</i>Percent-Percent (plan for percent)<br>
+                      <button class="pass">Refresh Weather Predicitons</button>
+                    </span>
+                </div>
+                <div class="trip-pack-list">
+                  <form class="packlist">
+                    <label for="enter-list">Things to bring.</label>
+                    <input name = "enter-list" type = "text"></input>
+                  </form>
+                  <ul class="list">
+                    <li>Lip Balm</li>
+                    <li>Train Tickets</li>
+                    <li>Rain Jacket</li>
+                    <li>Sunscreen</li>
+                  </ul>
+                  <button class="remove pass">Remove All</button>
+                </div>
+              </div>
+            </div>
+
           </section>
+
         </main>
 
         <footer>
