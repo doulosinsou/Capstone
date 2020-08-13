@@ -217,27 +217,67 @@ const fetchServer = async (path, data)=>{
 }
 
 document.getElementById('finalize').addEventListener("click", async function(){
-  let nameTrip = document.getElementById("nameTrip").value;
-  if (nameTrip.value === ""){
+  let nameTrip;
+  if (document.getElementById("nameTrip").value === ""){
     nameTrip = "Trip to "+weatherData.city_name+"on "+stayDate.arrival;
+  }else{
+    nameTrip = document.getElementById("nameTrip").value;
   }
 
   const vacation = weatherData.city_name+"+"+weatherData.country_code;
-  const image = await fetchServer('/pixabay', vacation);
-  const dataCanvas = await Client.updatePage.dataCanvas(image);
 
 
+  const findpic = await fetchServer('/pixabay', vacation)
+  .then(async function(findpic){
+    const datapicture= await Client.updatePage.dataCanvas(findpic);
+    return datapicture
+  })
+
+// console.log(findpic)
+
+  const list = document.querySelector("#list ul");
+  const string = JSON.stringify(list.innerHTML);
+  let userlist = [string];
 
   let saveWeather = {
     "weatherData":weatherData,
     "stayDate":stayDate,
-    "weather":weather
+    "weather":weather,
+    "userlist":userlist,
+    "picture":findpic
   };
 
-  let alltrips = JSON.parse(localStorage.getItem("trip")) || [];
+let alltrips;
+  if (JSON.parse(localStorage.getItem("trip"))){
+    alltrips = JSON.parse(localStorage.getItem("trip"));
+  }else{
+    alltrips = {};
+  }
 
   alltrips[nameTrip] = saveWeather;
 
   localStorage.setItem("trip", JSON.stringify(alltrips));
-  console.log(JSON.parse(localStorage.getItem("trip")));
+
+  // console.log(JSON.parse(localStorage.getItem("trip")));
+  Client.updatePage.buildTrips();
+
 })
+
+
+
+function updateList(){
+const savebtn = document.querySelectorAll(".save");
+for (let i=0;i<savebtn.length;i++){
+  savebtn[i].addEventListener("click", function(){
+    const list = JSON.stringify(event.target.parentNode.querySelector("ul.list").innerHTML);
+    const parent = event.target.closest(".details-container");
+    const tripName = parent.querySelector("h3").innerHTML;
+    const storage = JSON.parse(localStorage.getItem("trip")) || [];
+    storage[tripName].userlist = list;
+
+    localStorage.setItem("trip", JSON.stringify(storage));
+    console.log(JSON.parse(localStorage.getItem("trip")));
+
+  })
+}
+}
