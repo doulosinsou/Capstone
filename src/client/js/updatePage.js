@@ -72,22 +72,29 @@ export function buildTrips(){
   link.appendChild(logo);
 
   const records = JSON.parse(localStorage.getItem("trip"));
-  const entries = Object.entries(records)
-  console.log(entries);
-  for (let i=entries.length;i>0;i--){
+  console.log(records)
+
+  const entries = Object.entries(records);
+  entries.reverse();
+    // console.log(entries);
+  for (let i=0; i<entries.length;i++){
+    // console.log("trip name is: "+entries[i][0]);
+    // console.log("trip userlist is: "+entries[i][1].userlist);
+
     let trip = entries[i];
+    let tripName = trip[0];
+    let tripInfo = trip[1];
     if (trip !== "undefined"){
-    console.log(trip);
-    
-    let tripContainer = document.createElement("div");
-    tripContainer.className = "trip-container";
+    console.log(tripName);
+
+    let tripContainer = make("div", ["trip-container"]);
 
     // create the coverphoto of the trip
-    // let coverPhoto = document.createElement("div");
-    // coverPhoto.className = "cover-photo";
-    // let img = document.createElement("img");
-    // img.src= trip["picture"].src;
-    // img.alt= trip["picture"].tag;
+    let coverPhoto = make("div",["cover-photo"]);
+    let img = make("img");
+    img.src= tripInfo.picture.src;
+    img.alt= tripInfo.picture.tag;
+    console.log(img);
 
     // coverPhoto.appendChild(img);
     // coverPhoto.appendChild(link);
@@ -101,13 +108,21 @@ export function buildTrips(){
     // detContainer.appendChild(hThree);
 
 
-    }
+  }
   }
 
 }
 
-function make(something){
-  return document.createElement(something);
+function make(el, classes){
+  if (classes===undefined){
+    classes=[]
+  }
+  const newEl = document.createElement(el);
+  classes.forEach(addClass);
+  function addClass(name, index){
+    newEl.classList.add(name);
+  }
+  return newEl
 }
 
 document.getElementById("test").addEventListener("click", buildTrips)
