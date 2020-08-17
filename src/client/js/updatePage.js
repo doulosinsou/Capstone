@@ -1,3 +1,5 @@
+// localStorage.clear();
+
 window.addEventListener("load", packList);
 
 function packList(){
@@ -36,7 +38,6 @@ del();
 }
 
 export async function buildTrips(){
-  // localStorage.clear();
 
   const container = document.getElementById("trips");
   const replaceAll = document.createDocumentFragment();
@@ -88,11 +89,12 @@ export async function buildTrips(){
     // create the details of the trip
     let detContainer = make("div",["details-container"]);
     let hThree = make("h3");
+    hThree.innerHTML = tripName;
     detContainer.appendChild(hThree);
 
     let tripDets = make("div",["trip-details"]);
     let where = make("p");
-    where.innerHTML = '<b>Where: </b>'+tripName;
+    where.innerHTML = '<b>Where: </b>'+tripInfo.weatherData.city_name+" "+tripInfo.weatherData.country_code;
     let when = make("p");
     when.innerHTML = '<b>When: </b>'+tripInfo.stayDate.arrival;
     let weather = make("p");
@@ -102,15 +104,15 @@ export async function buildTrips(){
     weatherdets.innerHTML =
     '<i>Temp: </i>'+ weath.low_temp+" - "+weath.high_temp
     +' (plan for '+ weath.av_temp
-    +' )<br>'+
+    +'F )<br>'+
 
-    '<i>Humidity: </i>'+ weath.low_hum+" - "+weath.high_hum
-    +' (plan for '+ weath.av_hum
-    +' )<br>'+
+    '<i>Humidity: </i>'+ weath.low_hum+"% - "+weath.high_hum
+    +'% (plan for '+ weath.av_hum
+    +'% )<br>'+
 
-    '<i>Precipitation: </i>'+ weath.low_pop+" - "+ weath.high_pop
-    +' (plan for '+ weath.av_pop
-    +' )<br>';
+    '<i>Precipitation: </i>'+ weath.low_pop+"% - "+ weath.high_pop
+    +'% (plan for '+ weath.av_pop
+    +'% )<br>';
 
     let refresh = make("button", ["pass","refresh"]);
     refresh.innerHTML = "Update Weather Predictions";
@@ -136,7 +138,8 @@ export async function buildTrips(){
     packlst.appendChild(entList);
 
     let list = make("ul", ["list"]);
-    list.innerHTML = tripInfo.userlist[0].slice(1,-1);
+    list.innerHTML = tripInfo.userlist;
+    // list.innerHTML = tripInfo.userlist[0].slice(1,-1);
 
     let remove = make("button", ["remove", "pass"]);
     remove.innerHTML = "Remove All";
@@ -155,9 +158,11 @@ export async function buildTrips(){
     replaceAll.appendChild(tripContainer);
   }
   }
-
+  container.innerHTML = "";
   container.appendChild(replaceAll);
   packList();
+  Client.callAPI.updateList();
+  // updateWeathPred();
 }
 
 function make(el, classes){
@@ -173,3 +178,28 @@ function make(el, classes){
 }
 
 document.getElementById("test").addEventListener("click", buildTrips)
+
+async function updateWeathPred(){
+  const refBtns = document.querySelectorAll(".refresh");
+  for (let i=0;i<refBtns.length; i++){
+    refBtns[i].addEventListener("click", async function(){
+      const parent = event.target.closest(".details-container");
+      const tripName = parent.querySelector("h3").innerHTML;
+      const storage = JSON.parse(localStorage.getItem("trip")) || [];
+
+      const city = storage[tripName].weatherData.city_name+" "+storage[tripName].weatherData.country_code;
+      const validate = await Client.callAPI.validate(city);
+      const newWeather = await fetchServer("/Weatherbit", validate);
+      const analyzed = await analyze();
+
+      // storage[tripName].weatherData = list;
+
+      // localStorage.setItem("trip", JSON.stringify(storage));
+
+
+    })
+
+
+  }
+
+}

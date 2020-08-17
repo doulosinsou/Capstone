@@ -40,12 +40,13 @@ let stayDate = {};//arrival date, length of stay, and logged date marked with .a
 const weather = {}; //Analyzed weather data: lows, highs, average, median of temp, hum, and pop
 
 
-async function validate(userInput){
+export async function validate(userInput){
   const nums = new RegExp(/\d/);
   const numbers = nums.test(userInput);
   if (!numbers){
     relocate("passed");
     const encode = encodeURI(userInput);
+    console.log("")
     return encode;
   } else {
     relocate("error");
@@ -136,8 +137,13 @@ function prepare(){
 }
 
 //Analyze weather data and return lows, highs, average, and median of temperature, humitidy, and precipitation for days picked
-function analyze(arrive, depart){
-  const data = weatherData.data;
+function analyze(arrive, depart, weather){
+  let data;
+  if(weather){
+    data = weather
+  }else{
+    data = weatherData.data
+  }
   const min_max_temp = [];
   const average_temp = [];
   const hum_av = [];
@@ -241,7 +247,7 @@ document.getElementById('finalize').addEventListener("click", async function(){
     picdata = findpic;
   }
 
-  const list = document.querySelector("#list ul");
+  const list = document.querySelector("#list ul").innerHTML;
   const string = JSON.stringify(list.innerHTML);
   let userlist = [string];
 
@@ -249,7 +255,7 @@ document.getElementById('finalize').addEventListener("click", async function(){
     "weatherData":weatherData,
     "stayDate":stayDate,
     "weather":weather,
-    "userlist":userlist,
+    "userlist":list,
     "picture":picdata
   };
 
@@ -271,7 +277,7 @@ let alltrips;
 
 
 
-function updateList(){
+export function updateList(){
 const savebtn = document.querySelectorAll(".save");
 for (let i=0;i<savebtn.length;i++){
   savebtn[i].addEventListener("click", function(){
@@ -280,6 +286,8 @@ for (let i=0;i<savebtn.length;i++){
     const parent = event.target.closest(".details-container");
     const tripName = parent.querySelector("h3").innerHTML;
     const storage = JSON.parse(localStorage.getItem("trip")) || [];
+    // console.log(tripName);
+
     storage[tripName].userlist = list;
 
     localStorage.setItem("trip", JSON.stringify(storage));
