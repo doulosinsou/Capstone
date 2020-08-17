@@ -203,7 +203,7 @@ function packbags(weather){
 }
 
 //universal caller
-const fetchServer = async (path, data)=>{
+export const fetchServer = async (path, data)=>{
   const query = "?q=";
   const fordevserver = "http://localhost:3003";
   const call = await fetch(fordevserver+path+query+data);
@@ -217,23 +217,29 @@ const fetchServer = async (path, data)=>{
 }
 
 document.getElementById('finalize').addEventListener("click", async function(){
+
   let nameTrip;
   if (document.getElementById("nameTrip").value === ""){
-    nameTrip = "Trip to "+weatherData.city_name+"on "+stayDate.arrival;
+    nameTrip = "Trip to "+weatherData.city_name+" on "+stayDate.arrival;
   }else{
     nameTrip = document.getElementById("nameTrip").value;
   }
 
-  const vacation = weatherData.city_name+"+"+weatherData.country_code;
+  const vacation = weatherData.city_name;
 
 
-  const findpic = await fetchServer('/pixabay', vacation)
-  .then(async function(findpic){
-    const datapicture= await Client.updatePage.dataCanvas(findpic);
-    return datapicture
-  })
+  let picdata;
+  const findpic = await fetchServer('/pixabay', vacation);
+  if (findpic.exists === "false"){
 
-// console.log(findpic)
+    const build = await storeJPG(findpic);
+    console.log("passed as Exists:false");
+    picdata = build;
+
+  } else {
+    console.log("already logged");
+    picdata = findpic;
+  }
 
   const list = document.querySelector("#list ul");
   const string = JSON.stringify(list.innerHTML);
@@ -244,7 +250,7 @@ document.getElementById('finalize').addEventListener("click", async function(){
     "stayDate":stayDate,
     "weather":weather,
     "userlist":userlist,
-    "picture":findpic
+    "picture":picdata
   };
 
 let alltrips;
@@ -259,7 +265,7 @@ let alltrips;
   localStorage.setItem("trip", JSON.stringify(alltrips));
 
   // console.log(JSON.parse(localStorage.getItem("trip")));
-  Client.updatePage.buildTrips();
+  // Client.updatePage.buildTrips();
 
 })
 
@@ -269,7 +275,8 @@ function updateList(){
 const savebtn = document.querySelectorAll(".save");
 for (let i=0;i<savebtn.length;i++){
   savebtn[i].addEventListener("click", function(){
-    const list = JSON.stringify(event.target.parentNode.querySelector("ul.list").innerHTML);
+    // const list = JSON.stringify(event.target.parentNode.querySelector("ul.list").innerHTML);
+    const list =  event.target.parentNode.querySelector("ul.list").innerHTML;
     const parent = event.target.closest(".details-container");
     const tripName = parent.querySelector("h3").innerHTML;
     const storage = JSON.parse(localStorage.getItem("trip")) || [];
@@ -281,3 +288,45 @@ for (let i=0;i<savebtn.length;i++){
   })
 }
 }
+
+async function storeJPG(picture){
+
+    const preview = picture.url;
+
+    const show = document.createElement("img");
+    show.src = preview;
+    show.crossOrigin = "anonymous";
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext("2d");
+
+    canvas.width = picture.width;
+    canvas.height = picture.height;
+
+
+    const pixdata = new Promise(function(resolve, reject){
+      show.addEventListener("load", function(){
+      let imgDataUrl;
+      context.drawImage(show, 0, 0, picture.width, picture.height);
+      imgDataUrl = canvas.toDataURL("image/jpg", .8);
+
+      const newdata = {
+        "id": picture.id,
+        "src": imgDataUrl,
+        "tags":picture.tags
+      }
+      resolve(newdata);
+    })
+    });
+    const sendPic = await pixdata;
+      const fordevserver = "http://localhost:3003";
+      fetch(fordevserver+'/store', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sendPic),
+      });
+    return sendPic.id;
+  }
