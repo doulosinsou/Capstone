@@ -56,11 +56,9 @@ async function getWeather(req, res){
   const key = "key="+process.env.Weatherbit;
   const loc = "&lat="+req.query.lat+"&lon="+req.query.lon;
   const units = "&units=i";
-  // console.log(api+cred+loc);
   const call = await fetch(api+key+loc+units);
   try {
     const response = await call.json()
-    // console.log("getWeather response: "+response)
     res.send(response)
 
   } catch(error){
@@ -78,32 +76,76 @@ async function getpicture(req, res){
   const q = "&q="+req.query.q;
   const def = "&q=vacation";
 
-  let call = await fetch(api+key+params+q);
-  try {
+  let call = await fetch(api+key+params+q)
+  .then(async(call)=>{
+    // console.log(call);
     let response = await call.json();
-    if (response.total === "0"){
-      call = await fetch(api+key+params+def);
-      try {
+    // console.log(response);
+    if (response.total == "0"){
+      call = await fetch(api+key+params+def)
+      .then(async(call)=>{
         response = await call.json();
+        console.log(response);
+        console.log("Blank pixabay search. called default. about to process default pixabay call");
         const processedOne = await processPic(response);
+
         res.send(processedOne);
-      }catch(error){
-        console.log("default call error:"+error)
-      }
+      })
+
+      // console.log(call);
+      // try {
+      //   response = await call.json();
+      //   console.log("Blank pixabay search. called default. about to process default pixabay call");
+      //   const processedOne = await processPic(response);
+      //
+      //   res.send(processedOne);
+      // }catch(error){
+      //   console.log("default call error:"+error)
+      // }
+
     }else{
+      console.log("response.total does NOT == '0'");
       const processedTwo = await processPic(response);
       res.send(processedTwo);
     }
-  }catch(error){
-    console.log("pixabay call error:"+error)
-  }
+
+
+  })
+
+  // try {
+  //   let response = await call.json();
+  //   if (response.total === "0"){
+  //     call = await fetch(api+key+params+def);
+  //     try {
+  //       response = await call.json();
+  //       console.log("Blank pixabay search. called default. about to process default pixabay call");
+  //       const processedOne = await processPic(response);
+  //
+  //       res.send(processedOne);
+  //     }catch(error){
+  //       console.log("default call error:"+error)
+  //     }
+  //   }else{
+  //     const processedTwo = await processPic(response);
+  //     res.send(processedTwo);
+  //   }
+  // }catch(error){
+  //   console.log("pixabay call error:"+error)
+  // }
 
 
 }
 
 async function processPic(data){
-  const random = Math.floor(Math.random()*4);
-  const picture = data.hits[random];
+  let random;
+  if (data.hits.length<=3){
+  random = Math.floor(Math.random()*(data.hits.length));
+}else{
+  random = Math.floor(Math.random()*4);
+}
+
+const picture = data.hits[random];
+
   console.log("processPic(data)");
   console.log(picture);
 
@@ -119,8 +161,9 @@ async function processPic(data){
       }
     return build_obj;
   }else{
-    console.log("pictureData[id] passed as true");
-    return pictureData[id].id;
+    console.log("pictureData[id] passed as false");
+    const arrayId = [pictureData[id].id]
+    return arrayId;
   }
 }
 
@@ -132,11 +175,12 @@ function storePic(req, res){
     "tags": req.body.tags
   };
   console.log("storePic just saved data to pictureData[id]");
-  console.log(pictureData[id]);
+  // console.log(pictureData[id]);
 
 }
 
 function returnPictureData(req, res){
   const id = req.query.q;
+  console.log("return picture requested. Id requested of server is "+id);
   res.send(pictureData[id]);
 }

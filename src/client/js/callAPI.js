@@ -1,57 +1,45 @@
-export async function search(){
-  event.preventDefault()
-    const userInput = document.getElementById("location").value;
-    validate(userInput)
-    .then( async function(valid){
-      if(valid){
-        console.log("validated response is: "+valid)
-      const options = await fetchServer("/geoname", valid)
-      return options;
-      } else{
-      console.log("validator failed");
-      }
-    })
-    .then( async function(options){
-      if (options !== "Error"){
-        refine(options)
-
-        document.getElementById("go").addEventListener("click", async function(){
-          event.preventDefault();
-          const select = document.getElementById("select");
-          const weather = await fetchServer("/Weatherbit", select.value);
-
-          weatherData = weather;
-          console.log(weatherData);
-          next(when);
-        })
-              }else{
-        relocate("error")
-      }
-    })
-    .then( async function(choice){
-      // console.log(choice)
-    })
-
-
-}
-
 let weatherData = {};//Raw 16 day forecast from Weatherbit
 let stayDate = {};//arrival date, length of stay, and logged date marked with .arrival .stay .today
 const weather = {}; //Analyzed weather data: lows, highs, average, median of temp, hum, and pop
 
 
-export async function validate(userInput){
+export async function search(){
+  event.preventDefault()
+    const userInput = document.getElementById("location").value;
+
+    const val = validate(userInput);
+    const options = await fetchServer("/geoname", val)
+    .then((options)=>{
+      refine(options);
+    })
+
+    document.getElementById("go").addEventListener("click", function(){
+      weatherbit();
+      Client.updatePage.next("when");
+    });
+
+    document.getElementById('submitWhen').addEventListener("click", function(){
+      subWhen();
+      prepare();
+      Client.updatePage.next("what");
+    });
+
+    document.getElementById('finalize').addEventListener("click", finalize);
+};
+
+export function validate(userInput){
   const nums = new RegExp(/\d/);
   const numbers = nums.test(userInput);
   if (!numbers){
     relocate("passed");
     const encode = encodeURI(userInput);
-    console.log("")
+    console.log("validated response is: "+encode)
     return encode;
   } else {
+    console.log("validator failed");
     relocate("error");
   }
-}
+};
 
 function relocate(error){
   let relocate = document.getElementById('relocate');
@@ -60,9 +48,9 @@ function relocate(error){
 } else {
   relocate.innerHTML = "";
 }
-}
+};
 
-const refine = async (options)=>{
+export const refine = async (options)=>{
   const form = document.getElementById("refine");
   const select = document.createElement('select');
   const blank = document.createElement('option');
@@ -92,15 +80,36 @@ const refine = async (options)=>{
   form.innerHTML="<p>Refine your search</p>";
   form.appendChild(select);
   form.appendChild(go);
-}
+};
 
-function next(sec){
-  const section = document.getElementById(sec);
+export async function weatherbit(manual){
+  let select;
+  if(event){
+    event.preventDefault();
+    select = document.getElementById("select").value;
+    console.log("clicked on weatherbit");
+  }else{
+    select = manual;
+    console.log("refreshed weatherbit");
+  }
+    // if(manual === null){
+    //   console.log("clicked on weatherbit");
+    //   select = document.getElementById("select").value;
+    // }else{
+    //   select = manual;
+    //   console.log("refreshed weatherbit");
+    // }
+console.log(select);
+    const weather = await fetchServer("/Weatherbit", select);
+    weatherData = weather;
+    console.log(weatherData);
+    return weather;
+};
 
-}
-
-document.getElementById('submitWhen').addEventListener("click", function(){
-  event.preventDefault()
+export function subWhen(){
+  if(event){
+    event.preventDefault();
+  }
   const arrival = document.getElementById('date').value;
   const stay = document.getElementById('length').value;
   const today = new Date();
@@ -108,11 +117,9 @@ document.getElementById('submitWhen').addEventListener("click", function(){
   stayDate = {"arrival": arrival, "stay":stay, "today":today};
   console.log(stayDate);
 
-  next(what);
-  prepare();
-});
+};
 
-function prepare(){
+export function prepare(){
 
   const time = new Date(stayDate.arrival).getTime();
   const stay = stayDate.stay*86400000;
@@ -125,25 +132,17 @@ function prepare(){
 
   if (depart<16){
     const weather = analyze(arrival, depart);
-
     packbags(weather);
+  }else{
 
-  }else if(arrival<16){
-
-  }else {
-
+    packbags("Check the weather within about two weeks of trip");
   }
-
-}
+};
 
 //Analyze weather data and return lows, highs, average, and median of temperature, humitidy, and precipitation for days picked
-function analyze(arrive, depart, weather){
-  let data;
-  if(weather){
-    data = weather
-  }else{
-    data = weatherData.data
-  }
+function analyze(arrive, depart){
+  let data = weatherData.data
+
   const min_max_temp = [];
   const average_temp = [];
   const hum_av = [];
@@ -176,7 +175,6 @@ function analyze(arrive, depart, weather){
     return value;
   }
 
-
   const temp_range = range_avr(min_max_temp, average_temp);
   weather.low_temp = temp_range.low;
   weather.high_temp = temp_range.high;
@@ -196,9 +194,12 @@ function analyze(arrive, depart, weather){
   weather.med_pop = pop.med;
 
   return weather;
-}
+};
 
 function packbags(weather){
+  if (weather === "Check the weather within about two weeks of trip"){
+    lookslike.innerHTML = weather;
+  }else{
   const lookslike = document.getElementById('lookslike');
   const intro = "<p>Here's what you can expect the weather to be like:</p>";
   const temp = "<p>Temperature: "+weather.low_temp+"F - "+weather.high_temp+"F, Average: "+weather.av_temp+"F</p>";
@@ -207,6 +208,7 @@ function packbags(weather){
   const normal = "<p>You can expect a normal day to be: "+weather.med_temp+"F, hum: "+weather.med_hum+"%, prec: "+weather.med_pop+"%</p>";
   lookslike.innerHTML = intro+temp+hum+prec+normal;
 }
+};
 
 //universal caller
 export const fetchServer = async (path, data)=>{
@@ -220,9 +222,10 @@ export const fetchServer = async (path, data)=>{
     console.log(error);
   }
 
-}
+};
 
-document.getElementById('finalize').addEventListener("click", async function(){
+
+export async function finalize(){
 
   let nameTrip;
   if (document.getElementById("nameTrip").value === ""){
@@ -232,7 +235,6 @@ document.getElementById('finalize').addEventListener("click", async function(){
   }
 
   const vacation = weatherData.city_name;
-
 
   let picdata;
   const findpic = await fetchServer('/pixabay', vacation);
@@ -244,8 +246,10 @@ document.getElementById('finalize').addEventListener("click", async function(){
 
   } else {
     console.log("already logged");
-    picdata = findpic;
+    picdata = findpic[0];
   }
+
+  console.log(picdata);
 
   const list = document.querySelector("#list ul").innerHTML;
   const string = JSON.stringify(list.innerHTML);
@@ -271,17 +275,14 @@ let alltrips;
   localStorage.setItem("trip", JSON.stringify(alltrips));
 
   // console.log(JSON.parse(localStorage.getItem("trip")));
-  // Client.updatePage.buildTrips();
+  Client.updatePage.buildTrips();
 
-})
-
-
+};
 
 export function updateList(){
 const savebtn = document.querySelectorAll(".save");
 for (let i=0;i<savebtn.length;i++){
   savebtn[i].addEventListener("click", function(){
-    // const list = JSON.stringify(event.target.parentNode.querySelector("ul.list").innerHTML);
     const list =  event.target.parentNode.querySelector("ul.list").innerHTML;
     const parent = event.target.closest(".details-container");
     const tripName = parent.querySelector("h3").innerHTML;
@@ -295,7 +296,7 @@ for (let i=0;i<savebtn.length;i++){
 
   })
 }
-}
+};
 
 async function storeJPG(picture){
 
@@ -310,7 +311,6 @@ async function storeJPG(picture){
 
     canvas.width = picture.width;
     canvas.height = picture.height;
-
 
     const pixdata = new Promise(function(resolve, reject){
       show.addEventListener("load", function(){
@@ -337,4 +337,4 @@ async function storeJPG(picture){
         body: JSON.stringify(sendPic),
       });
     return sendPic.id;
-  }
+};
