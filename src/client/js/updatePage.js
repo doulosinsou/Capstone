@@ -1,19 +1,25 @@
 // localStorage.clear();
-window.addEventListener("load", buildTrips);
-window.addEventListener("load", packList);
+window.addEventListener("load", function(){
 
+  buildTrips();
+  packList();
+  cycle();
+});
+// window.addEventListener("load", packList);
+
+document.getElementById('planBtn').addEventListener("click",function(){
+  resetForm();
+  next("where");
+
+});
 
 function packList(){
   const form = document.querySelectorAll("form.packlist");
   for (let i=0; i<form.length; i++){
-    form[i].addEventListener("submit", function(event){
+    form[i].addEventListener("submit", function(){
       event.preventDefault();
       const entry = event.target.querySelector("input[name='enter-list']");
       const list = event.target.parentNode.querySelector("ul");
-        // if(list.querySelector("li.sample")){
-        //   list.innerHTML="";
-        // }
-        // list.querySelector("li.sample") ? list.innerHTML="" : "";
       const new_item = document.createElement("li");
       new_item.innerHTML = entry.value;
       list.appendChild(new_item);
@@ -43,7 +49,7 @@ export async function buildTrips(){
   const container = document.getElementById("trips");
   const replaceAll = document.createDocumentFragment();
 
-  const records = JSON.parse(localStorage.getItem("trip"));
+  const records = JSON.parse(localStorage.getItem("trip")) || [];
   const entries = Object.entries(records);
 
 //order storage records by beginning of trip
@@ -195,8 +201,6 @@ function make(el, classes){
   return newEl
 }
 
-document.getElementById("test").addEventListener("click", buildTrips);
-
 function updateWeathPred(){
   const refBtns = document.querySelectorAll(".refresh");
 
@@ -255,19 +259,27 @@ function deleteTrip(){
 
 function cycle(){
   const firstCover = document.querySelector(".cover");
-  firstCover.addEventListener("click", next("where"))
+  firstCover.addEventListener("click", function(){
+    next("where");
+  })
 };
 
 
 export function next(sec){
-  const section = document.getElementById(sec);
-  section.querySelector(".cover").classList.add("fade");
+  const section = document.getElementById(sec).querySelector(".cover");
+  section.classList.add("fade");
+  setTimeout(function(){
+    section.style.display = "none";
+  },
+    1500
+  );
 };
 
 function resetForm(){
   const covers = document.querySelectorAll(".cover");
   for (let i=0; i<covers.length; i++){
-    covers[i].classList.remove("fade")
+    covers[i].classList.remove("fade");
+    covers[i].style.display = "flex";
   }
   cycle();
   location.hash = "#where";

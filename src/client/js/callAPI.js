@@ -2,6 +2,7 @@ let weatherData = {};//Raw 16 day forecast from Weatherbit
 let stayDate = {};//arrival date, length of stay, and logged date marked with .arrival .stay .today
 const weather = {}; //Analyzed weather data: lows, highs, average, median of temp, hum, and pop
 
+document.getElementById("form-container").querySelector("form").addEventListener("submit", search);
 
 export async function search(){
   event.preventDefault()
@@ -75,6 +76,7 @@ export const refine = async (options)=>{
   const go = document.createElement('button');
   go.id = "go";
   go.textContent = "Go";
+  go.classList.add("main");
 
 
   form.innerHTML="<p>Refine your search</p>";
@@ -92,13 +94,6 @@ export async function weatherbit(manual){
     select = manual;
     console.log("refreshed weatherbit");
   }
-    // if(manual === null){
-    //   console.log("clicked on weatherbit");
-    //   select = document.getElementById("select").value;
-    // }else{
-    //   select = manual;
-    //   console.log("refreshed weatherbit");
-    // }
 console.log(select);
     const weather = await fetchServer("/Weatherbit", select);
     weatherData = weather;
@@ -167,9 +162,9 @@ function analyze(arrive, depart){
     value.av = Math.round(avr(av));
 
     if (av.length % 2 === 0){ // is the number of items even
-      value.med = (av[av.length / 2 -1] + av[av.length/2])/2; //median
+      value.med = Math.round((av[av.length / 2 -1] + av[av.length/2])/2); //median
     }else{ // is the number of items odd
-      value.med = av[(av.length-1)/2];
+      value.med = Math.round(av[(av.length-1)/2]);
     }
 
     return value;
@@ -205,8 +200,8 @@ function packbags(weather){
   const temp = "<p>Temperature: "+weather.low_temp+"F - "+weather.high_temp+"F, Average: "+weather.av_temp+"F</p>";
   const hum = "<p>Humidity: "+weather.low_hum+"% - "+weather.high_hum+"%, Average: "+weather.av_hum+"%</p>";
   const prec = "<p>Precipitation: "+weather.low_pop+"% - "+weather.high_pop+"%, Average: "+weather.av_pop+"%</p>";
-  const normal = "<p>You can expect a normal day to be: "+weather.med_temp+"F, hum: "+weather.med_hum+"%, prec: "+weather.med_pop+"%</p>";
-  lookslike.innerHTML = intro+temp+hum+prec+normal;
+  const normal = "<p>You can expect a normal day to be:<br> "+weather.med_temp+"F,<br>"+weather.med_hum+"% hum,<br>"+weather.med_pop+"% prec</p>";
+  lookslike.innerHTML = intro+"<br>"+temp+"<br>"+hum+"<br>"+prec+"<br>"+normal;
 }
 };
 

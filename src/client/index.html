@@ -23,9 +23,10 @@
                 <h2>1</h2>
                 <p>Pick a Location</p>
               </div>
-              <form onsubmit="Client.callAPI.search()">
+              <form>
                 <label for="location">City (country optional)</label><br>
                 <input type="text" id="location" name="location"></input>
+                <button class="pass">Enter</button>
                 <div id="relocate"></div>
               </form>
               <form id="refine">
@@ -58,7 +59,7 @@
                 </div>
                 <div id="list">
                   <form class="packlist">
-                    <label for="enter-list">Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
+                    <label for="enter-list"><br>Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
                     <input name = "enter-list" type = "text"></input>
                   </form>
                   <ul class="list">
@@ -72,14 +73,14 @@
                   <label for="nameTrip">Name Your Trip</label>
                   <input id="nameTrip" name="nameTrip" type="text"></input>
                   <button class="main" id="finalize">Save Your Trip!</button>
-                  <button id="test">test Build</button>
+
               </div>
             </section>
           </div>
 
           <section id = "trips">
 
-            <div class="trip-container hide">
+            <div class="trip-container">
               <div class="cover-photo">
                 <img src="" alt="">
                 <a class="pix-credit" href="https://pixabay.com/"><img src="./img/pixabay_logo.png" alt="pixabay logo"></a>
@@ -121,7 +122,7 @@
 
         <footer>
             <p>Thanks for using. App by Luke Moyer.</p>
-            <p>Search engine made possible by <a href=""></a>, <a href=""></a>, and <a href=""></a></p>
+            <p>Search engine made possible by <a href="https://weatherbit.io">Weatherbit</a>, <a href="http://www.geonames.org">Geonames</a>, and <a href="https://pixabay.com">Pixabay</a></p>
         </footer>
         <!-- <script>
          if ('serviceWorker' in navigator) {
