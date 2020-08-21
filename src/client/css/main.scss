@@ -5,7 +5,6 @@ $orange2: #ff900e;
 $gradient: linear-gradient(to right, $orange1, $orange2);
 $gradient2: linear-gradient(to right, $maindark, $maindark2);
 
-
 body {
   color: $maindark;
   display: flex;
@@ -14,30 +13,30 @@ body {
   height: 100vh;
 }
 
-button.main{
+button.main {
   background: $gradient;
   padding: 10px;
   border-radius: 8px;
   margin: 30px 0;
 }
-button.pass{
+
+button.pass {
   background: $gradient2;
   color: #fff;
   padding: 10px;
   border-radius: 8px;
   margin: 30px 0;
 }
-button.main:hover, button.pass:hover{
+
+button.main:hover,
+button.pass:hover {
   cursor: pointer;
 }
-
 
 main {
   flex: 2;
 
-
-  #form-container{
-
+  #form-container {
     margin: 30px;
     width: calc(100% - 60px);
     display: flex;
@@ -45,7 +44,7 @@ main {
     justify-content: space-between;
     gap: 20px;
 
-    section{
+    section {
       position: relative;
       background-color: #cdcdcd;
       border: medium solid $maindark;
@@ -58,25 +57,28 @@ main {
         font-size: 4em;
         font-weight: bold;
       }
-      p{
+
+      p {
         font-style: italic;
       }
-      input{
+
+      input {
         width: 100%;
         margin: 10px 0;
       }
-      select{
-        width: 100%;
 
+      select {
+        width: 100%;
       }
     }
 
-    #where .cover:hover{
+    #where .cover:hover {
       cursor: pointer;
       transition: background-color 1s;
       background-color: lightgray;
     }
-    .cover{
+
+    .cover {
       background-color: gray;
       position: absolute;
       width: 100%;
@@ -88,118 +90,119 @@ main {
       justify-content: center;
       opacity: 1;
       transition: opacity 1s;
-
     }
-    .cover.fade{
+
+    .cover.fade {
       opacity: 0;
     }
-
   }
 
-  .list{
-     li:not(.sample){
-       list-style-type: "- ";
-     }
-     li:hover{
-       list-style-type: "X ";
-       text-decoration: underline;
-       cursor: pointer;
-     }
+  .list {
+    li:not(.sample) {
+      list-style-type: "- ";
+    }
+
+    li:hover {
+      list-style-type: "X ";
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 
-  #trips{
+  #trips {
     margin: 60px auto;
     max-width: 800px;
 
-    .trip-container{
+    .trip-container {
       margin: 30px;
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 30px;
       line-height: 1.4em;
-      box-shadow: 5px 5px 10px rgba($maindark, .5) ;
+      box-shadow: 5px 5px 10px rgba($maindark, .5);
       border-radius: 8px;
       border: medium solid $maindark;
       background-color: #fff6ec;
       overflow: hidden;
+      position: relative;
 
-
-      .cover-photo{
+      .cover-photo {
         background-color: green;
         padding: 28%;
         box-sizing: border-box;
         position: relative;
 
-        img {
+        > img {
           position: absolute;
-          top:0;
+          top: 0;
           left: 0;
-          width:100%;
+          width: 100%;
           height: 100%;
-          object-fit:cover;
+          object-fit: cover;
         }
       }
 
-      .details-container{
+      .pix-credit {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 200px;
+
+        img {
+          object-fit: contain;
+          width: 100%;
+        }
+      }
+
+      .details-container {
         margin: 30px;
       }
+
       h3 {
         font-size: 2em;
         weight: bold;
         text-align: center;
       }
-      .trip-details{
+
+      .trip-details {
         margin: 30px 0;
       }
 
-      b{
+      b {
         font-weight: bold;
       }
-
-    }
-    //TESTING PURPOSES
-    .hide {
-      display:none;
     }
   }
-
-
-
 }
-
-
-@media screen and (min-width:900px){
-  main{
-
+@media screen and (min-width:900px) {
+  main {
     #form-container {
-    flex-direction: row;
+      flex-direction: row;
 
-    section{
-      width: 30%;
-    }
+      section {
+        width: 30%;
+      }
     }
 
-    #trips{
-      button{
+    #trips {
+      button {
         margin-top: 10px;
       }
 
-      .trip-pack-list{
+      .trip-pack-list {
         display: flex;
         flex-direction: column;
+      }
 
-      }
-      label{
+      label {
         display: block;
-        // margin-bottom: 20px;
       }
-      .packlist, ul{
+
+      .packlist,
+      ul {
         text-align: center;
         line-height: 30px;
       }
-
-
     }
-
-}
+  }
 }

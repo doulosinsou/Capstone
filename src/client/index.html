@@ -1,135 +1,101 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Plan Your Vacation</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
 
-    <body>
+<head>
+  <meta charset="utf-8">
+  <title>Plan Your Vacation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
 
-        <header>
-            <h1>Vacation Plans</h1>
-            <p>Don't just make thoughts, make plans</p>
-            <div id="button-container">
-              <button class="main" id="planBtn">Plan Your Trip</button>
-            </div>
-        </header>
+<body>
 
-        <main>
-          <div id="form-container">
-            <section id = "where">
-              <div class = "cover">
-                <h2>1</h2>
-                <p>Pick a Location</p>
-              </div>
-              <form>
-                <label for="location">City (country optional)</label><br>
-                <input type="text" id="location" name="location"></input>
-                <button class="pass">Enter</button>
-                <div id="relocate"></div>
-              </form>
-              <form id="refine">
+  <header>
+    <h1>Vacation Plans</h1>
+    <p>Don't just make thoughts, make plans</p>
+    <div id="button-container">
+      <button class="main" id="planBtn">Plan Your Trip</button>
+    </div>
+  </header>
 
-              </form>
-            </section>
+  <main>
+    <div id="form-container">
+      <section id="where">
+        <div class="cover">
+          <h2>1</h2>
+          <p>Pick a Location</p>
+        </div>
+        <form>
+          <label for="location">City (country optional)</label><br>
+          <input type="text" id="location" name="location"></input>
+          <button class="pass">Enter</button>
+          <div id="relocate"></div>
+        </form>
+        <form id="refine">
 
-            <section id = "when">
-              <div class="cover">
-                <h2>2</h2>
-                <p>Pick a Time</p>
-              </div>
-              <form>
-                <label for="date">When will you be ariving?</label>
-                <input id ="date" name = "date" type="date">
-                </input>
-                <label for="length">How Long will you be staying?</label>
-                <input id = "length" type="number" placeholder="days"></input>
-                <button class="main" id="submitWhen">Go</button>
-              </form>
-            </section>
+        </form>
+      </section>
 
-            <section id= "what">
-              <div class="cover">
-                <h2>3</h2>
-                <p>Back Your Bags</p>
-              </div>
-              <div id="data-container">
-                <div id="lookslike">
-                </div>
-                <div id="list">
-                  <form class="packlist">
-                    <label for="enter-list"><br>Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
-                    <input name = "enter-list" type = "text"></input>
-                  </form>
-                  <ul class="list">
-                    <li class="sample">Lip Balm</li>
-                    <li class="sample">Train Tickets</li>
-                    <li class="sample">Rain Jacket</li>
-                    <li class="sample">Sunscreen</li>
-                  </ul>
-                  <button class="remove pass">Remove All</button>
-                </div>
-                  <label for="nameTrip">Name Your Trip</label>
-                  <input id="nameTrip" name="nameTrip" type="text"></input>
-                  <button class="main" id="finalize">Save Your Trip!</button>
+      <section id="when">
+        <div class="cover">
+          <h2>2</h2>
+          <p>Pick a Time</p>
+        </div>
+        <form>
+          <label for="date">When will you be ariving?</label>
+          <input id="date" name="date" type="date">
+          </input>
+          <label for="length">How Long will you be staying?</label>
+          <input id="length" type="number" placeholder="days"></input>
+          <button class="main" id="submitWhen">Go</button>
+        </form>
+      </section>
 
-              </div>
-            </section>
+      <section id="what">
+        <div class="cover">
+          <h2>3</h2>
+          <p>Back Your Bags</p>
+        </div>
+        <div id="data-container">
+          <div id="lookslike">
           </div>
+          <div id="list">
+            <form class="packlist">
+              <label for="enter-list"><br>Jot down what you want to make sure to bring. Hit enter to keep adding to the list.</label>
+              <input name="enter-list" type="text"></input>
+            </form>
+            <ul class="list">
+              <li class="sample">Lip Balm</li>
+              <li class="sample">Train Tickets</li>
+              <li class="sample">Rain Jacket</li>
+              <li class="sample">Sunscreen</li>
+            </ul>
+            <button class="remove pass">Remove All</button>
+          </div>
+          <label for="nameTrip">Name Your Trip</label>
+          <input id="nameTrip" name="nameTrip" type="text"></input>
+          <button class="main" id="finalize">Save Your Trip!</button>
 
-          <section id = "trips">
+        </div>
+      </section>
+    </div>
 
-            <div class="trip-container">
-              <div class="cover-photo">
-                <img src="" alt="">
-                <a class="pix-credit" href="https://pixabay.com/"><img src="./img/pixabay_logo.png" alt="pixabay logo"></a>
-              </div>
-              <div class="details-container">
-                <h3>Second item</h3>
-                <div class="trip-details">
-                  <p><b>Where:</b> location.</p>
-                  <p><b>When:</b> Date - Date (x days).</p>
-                  <p><b>Weather:</b><br>
-                    <span>
-                      <i>Temp:</i>Degrees-Degress (plan for degrees)<br>
-                      <i>Humidity:</i>Percent-Percent (plan for percent)<br>
-                      <i>Precipitation:</i>Percent-Percent (plan for percent)<br>
-                      <button class="pass refresh">Refresh Weather Predicitons</button>
-                    </span>
-                </div>
-                <div class="trip-pack-list">
-                  <form class="packlist">
-                    <label for="enter-list">Things to bring.</label>
-                    <input name = "enter-list" type = "text"></input>
-                  </form>
-                  <ul class="list">
-                    <li>Lip Balm</li>
-                    <li>Train Tickets</li>
-                    <li>Rain Jacket</li>
-                    <li>Sunscreen</li>
-                  </ul>
-                  <button class="remove pass">Remove All</button>
-                  <button class="main save">Save</button>
-                  <button class="delete">Delete</button>
-                </div>
-              </div>
-            </div>
+    <section id="trips">
 
-          </section>
+    </section>
 
-        </main>
+  </main>
 
-        <footer>
-            <p>Thanks for using. App by Luke Moyer.</p>
-            <p>Search engine made possible by <a href="https://weatherbit.io">Weatherbit</a>, <a href="http://www.geonames.org">Geonames</a>, and <a href="https://pixabay.com">Pixabay</a></p>
-        </footer>
-        <!-- <script>
-         if ('serviceWorker' in navigator) {
-             window.addEventListener('load', () => {
-                 navigator.serviceWorker.register('/service-worker.js');
-             });
-         }
-        </script> -->
-    </body>
+  <footer>
+    <p>Thanks for using. App by Luke Moyer.</p>
+    <p>Search engine made possible by <a href="https://weatherbit.io">Weatherbit</a>, <a href="http://www.geonames.org">Geonames</a>, and <a href="https://pixabay.com">Pixabay</a></p>
+  </footer>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js');
+      });
+    }
+  </script>
+</body>
+
 </html>

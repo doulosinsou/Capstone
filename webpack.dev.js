@@ -2,6 +2,7 @@ const path = require("path")
 const webpack = require("webpack")
 const HtmlWebPackPlugin = require("html-webpack-plugin")
 const {CleanWebpackPlugin} = require("clean-webpack-plugin")
+const fileLoader = require("file-loader")
 
 module.exports = {
   mode: "development",
@@ -12,7 +13,8 @@ module.exports = {
     library: "Client"
   },
   module: {
-    rules: [{
+    rules: [
+    {
       test: '/\.js$/',
       exclude: /node_modules/,
       loader: "babel-loader"
@@ -20,7 +22,12 @@ module.exports = {
     {
       test: /\.scss$/,
       use: ['style-loader', 'css-loader', 'sass-loader']
-    }]
+    },
+    {
+      test: /\.(png|jpe?g|gif)$/i,
+      use: [{loader: 'file-loader'}]
+    }
+  ]
     },
   plugins: [
     new HtmlWebPackPlugin({

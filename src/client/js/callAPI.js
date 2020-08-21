@@ -1,40 +1,42 @@
-let weatherData = {};//Raw 16 day forecast from Weatherbit
-let stayDate = {};//arrival date, length of stay, and logged date marked with .arrival .stay .today
+let weatherData = {}; //Raw 16 day forecast from Weatherbit
+let stayDate = {}; //arrival date, length of stay, and logged date marked with .arrival .stay .today
 const weather = {}; //Analyzed weather data: lows, highs, average, median of temp, hum, and pop
 
 document.getElementById("form-container").querySelector("form").addEventListener("submit", search);
 
-export async function search(){
+//initiates all my functions onload
+export async function search() {
   event.preventDefault()
-    const userInput = document.getElementById("location").value;
+  const userInput = document.getElementById("location").value;
 
-    const val = validate(userInput);
-    const options = await fetchServer("/geoname", val)
-    .then((options)=>{
+  const val = validate(userInput);
+  const options = await fetchServer("/geoname", val)
+    .then((options) => {
       refine(options);
     })
 
-    document.getElementById("go").addEventListener("click", function(){
-      weatherbit();
-      Client.updatePage.next("when");
-    });
+  document.getElementById("go").addEventListener("click", function() {
+    weatherbit();
+    Client.updatePage.next("when");
+  });
 
-    document.getElementById('submitWhen').addEventListener("click", function(){
-      subWhen();
-      prepare();
-      Client.updatePage.next("what");
-    });
+  document.getElementById('submitWhen').addEventListener("click", function() {
+    subWhen();
+    prepare();
+    Client.updatePage.next("what");
+  });
 
-    document.getElementById('finalize').addEventListener("click", finalize);
+  document.getElementById('finalize').addEventListener("click", finalize);
 };
 
-export function validate(userInput){
+//Checks the user input for valid response to send to Geoname
+export function validate(userInput) {
   const nums = new RegExp(/\d/);
   const numbers = nums.test(userInput);
-  if (!numbers){
+  if (!numbers) {
     relocate("passed");
     const encode = encodeURI(userInput);
-    console.log("validated response is: "+encode)
+    console.log("validated response is: " + encode)
     return encode;
   } else {
     console.log("validator failed");
@@ -42,33 +44,35 @@ export function validate(userInput){
   }
 };
 
-function relocate(error){
+//if user input is invalid, display message
+function relocate(error) {
   let relocate = document.getElementById('relocate');
-  if (error == "error"){
-  relocate.innerHTML = "Please input valid location";
-} else {
-  relocate.innerHTML = "";
-}
+  if (error == "error") {
+    relocate.innerHTML = "Please input valid location";
+  } else {
+    relocate.innerHTML = "";
+  }
 };
 
-export const refine = async (options)=>{
+//return the top 5 options from Geoname and let user select
+export const refine = async (options) => {
   const form = document.getElementById("refine");
   const select = document.createElement('select');
   const blank = document.createElement('option');
   blank.value = "Choose";
   select.appendChild(blank);
-  select.id="select";
-  for (let i=0;i<options.length;i++){
+  select.id = "select";
+  for (let i = 0; i < options.length; i++) {
     let cityname = options[i].toponymName;
-    if (cityname.length >15){
-      cityname = cityname.substring(0,15)+"...";
+    if (cityname.length > 15) {
+      cityname = cityname.substring(0, 15) + "...";
     }
     let country = options[i].countryName;
     let state = options[i].adminName1;
     let coor = "&lat=" + options[i].lat + "&lon=" + options[i].lng;
 
     let option = document.createElement('option');
-    option.innerHTML = cityname+" "+state+", "+country;
+    option.innerHTML = cityname + " " + state + ", " + country;
     option.value = coor;
 
     select.appendChild(option)
@@ -79,63 +83,70 @@ export const refine = async (options)=>{
   go.classList.add("main");
 
 
-  form.innerHTML="<p>Refine your search</p>";
+  form.innerHTML = "<p>Refine your search</p>";
   form.appendChild(select);
   form.appendChild(go);
 };
 
-export async function weatherbit(manual){
+//call weatherbit based on selected option from refine()
+export async function weatherbit(manual) {
   let select;
-  if(event){
+  if (event) {
     event.preventDefault();
     select = document.getElementById("select").value;
     console.log("clicked on weatherbit");
-  }else{
+  } else {
     select = manual;
     console.log("refreshed weatherbit");
   }
-console.log(select);
-    const weather = await fetchServer("/Weatherbit", select);
-    weatherData = weather;
-    console.log(weatherData);
-    return weather;
+  console.log(select);
+  const weather = await fetchServer("/Weatherbit", select);
+  weatherData = weather;
+  console.log(weatherData);
+  return weather;
 };
 
-export function subWhen(){
-  if(event){
+//log trip date and call for calculations of weather on those dates
+export function subWhen() {
+  if (event) {
     event.preventDefault();
   }
   const arrival = document.getElementById('date').value;
   const stay = document.getElementById('length').value;
   const today = new Date();
 
-  stayDate = {"arrival": arrival, "stay":stay, "today":today};
+  stayDate = {
+    "arrival": arrival,
+    "stay": stay,
+    "today": today
+  };
   console.log(stayDate);
 
 };
 
-export function prepare(){
+//organizes console and calls appropriate calculators
+export function prepare() {
 
   const time = new Date(stayDate.arrival).getTime();
-  const stay = stayDate.stay*86400000;
+  const stay = stayDate.stay * 86400000;
   const now = new Date(stayDate.today).getTime();
-  const arrival = Math.ceil((time - now)/86400000);
-  const depart = Math.ceil(((time+stay)-now)/86400000);
+  const arrival = Math.ceil((time - now) / 86400000);
+  const depart = Math.ceil(((time + stay) - now) / 86400000);
 
-  console.log("planning to arrive in "+arrival+" days");
-  console.log("planning to depart in "+depart+" days");
+  console.log("planning to arrive in " + arrival + " days");
+  console.log("planning to depart in " + depart + " days");
 
-  if (depart<16){
+  if (depart < 16) {
     const weather = analyze(arrival, depart);
     packbags(weather);
-  }else{
+  } else {
 
     packbags("Check the weather within about two weeks of trip");
   }
 };
 
 //Analyze weather data and return lows, highs, average, and median of temperature, humitidy, and precipitation for days picked
-function analyze(arrive, depart){
+function analyze(arrive, depart) {
   let data = weatherData.data
 
   const min_max_temp = [];
@@ -143,7 +154,7 @@ function analyze(arrive, depart){
   const hum_av = [];
   const pop_range = []
 
-  for(let i=(arrive); i<(depart); i++){
+  for (let i = (arrive); i < (depart); i++) {
     const day = data[i];
     min_max_temp.push(day.max_temp);
     min_max_temp.push(day.min_temp);
@@ -152,19 +163,20 @@ function analyze(arrive, depart){
     pop_range.push(day.pop);
   }
 
+  //helper function to calculate min-max, av, and median of array
   const range_avr = (min_max, av) => {
-    const value={};
+    const value = {};
     av.sort();
 
     value.low = Math.round(Math.min(...min_max));
     value.high = Math.round(Math.max(...min_max));
-    const avr = avr => avr.reduce((a,b)=> a + b, 0) / avr.length;
+    const avr = avr => avr.reduce((a, b) => a + b, 0) / avr.length;
     value.av = Math.round(avr(av));
 
-    if (av.length % 2 === 0){ // is the number of items even
-      value.med = Math.round((av[av.length / 2 -1] + av[av.length/2])/2); //median
-    }else{ // is the number of items odd
-      value.med = Math.round(av[(av.length-1)/2]);
+    if (av.length % 2 === 0) { // is the number of items even
+      value.med = Math.round((av[av.length / 2 - 1] + av[av.length / 2]) / 2); //median
+    } else { // is the number of items odd
+      value.med = Math.round(av[(av.length - 1) / 2]);
     }
 
     return value;
@@ -176,7 +188,7 @@ function analyze(arrive, depart){
   weather.av_temp = temp_range.av;
   weather.med_temp = temp_range.med
 
-  const hum_range = range_avr(hum_av,hum_av);
+  const hum_range = range_avr(hum_av, hum_av);
   weather.low_hum = hum_range.low;
   weather.high_hum = hum_range.high;
   weather.av_hum = hum_range.av;
@@ -191,41 +203,41 @@ function analyze(arrive, depart){
   return weather;
 };
 
-function packbags(weather){
-  if (weather === "Check the weather within about two weeks of trip"){
+//populates third trip field with weather data
+function packbags(weather) {
+  if (weather === "Check the weather within about two weeks of trip") {
     lookslike.innerHTML = weather;
-  }else{
-  const lookslike = document.getElementById('lookslike');
-  const intro = "<p>Here's what you can expect the weather to be like:</p>";
-  const temp = "<p>Temperature: "+weather.low_temp+"F - "+weather.high_temp+"F, Average: "+weather.av_temp+"F</p>";
-  const hum = "<p>Humidity: "+weather.low_hum+"% - "+weather.high_hum+"%, Average: "+weather.av_hum+"%</p>";
-  const prec = "<p>Precipitation: "+weather.low_pop+"% - "+weather.high_pop+"%, Average: "+weather.av_pop+"%</p>";
-  const normal = "<p>You can expect a normal day to be:<br> "+weather.med_temp+"F,<br>"+weather.med_hum+"% hum,<br>"+weather.med_pop+"% prec</p>";
-  lookslike.innerHTML = intro+"<br>"+temp+"<br>"+hum+"<br>"+prec+"<br>"+normal;
-}
+  } else {
+    const lookslike = document.getElementById('lookslike');
+    const intro = "<p>Here's what you can expect the weather to be like:</p>";
+    const temp = "<p>Temperature: " + weather.low_temp + "F - " + weather.high_temp + "F, Average: " + weather.av_temp + "F</p>";
+    const hum = "<p>Humidity: " + weather.low_hum + "% - " + weather.high_hum + "%, Average: " + weather.av_hum + "%</p>";
+    const prec = "<p>Precipitation: " + weather.low_pop + "% - " + weather.high_pop + "%, Average: " + weather.av_pop + "%</p>";
+    const normal = "<p>You can expect a normal day to be:<br> " + weather.med_temp + "F,<br>" + weather.med_hum + "% hum,<br>" + weather.med_pop + "% prec</p>";
+    lookslike.innerHTML = intro + "<br>" + temp + "<br>" + hum + "<br>" + prec + "<br>" + normal;
+  }
 };
 
-//universal caller
-export const fetchServer = async (path, data)=>{
+//universal server GET caller
+export const fetchServer = async (path, data) => {
   const query = "?q=";
-  const fordevserver = "http://localhost:3003";
-  const call = await fetch(fordevserver+path+query+data);
+  const call = await fetch(path + query + data);
   try {
     const response = await call.json()
     return response
-  } catch (error){
+  } catch (error) {
     console.log(error);
   }
 
 };
 
-
-export async function finalize(){
+//sets object data for all trip information, stores data in browser localstorage
+export async function finalize() {
 
   let nameTrip;
-  if (document.getElementById("nameTrip").value === ""){
-    nameTrip = "Trip to "+weatherData.city_name+" on "+stayDate.arrival;
-  }else{
+  if (document.getElementById("nameTrip").value === "") {
+    nameTrip = "Trip to " + weatherData.city_name + " on " + stayDate.arrival;
+  } else {
     nameTrip = document.getElementById("nameTrip").value;
   }
 
@@ -233,7 +245,7 @@ export async function finalize(){
 
   let picdata;
   const findpic = await fetchServer('/pixabay', vacation);
-  if (findpic.exists === "false"){
+  if (findpic.exists === "false") {
 
     const build = await storeJPG(findpic);
     console.log("passed as Exists:false");
@@ -251,17 +263,17 @@ export async function finalize(){
   let userlist = [string];
 
   let saveWeather = {
-    "weatherData":weatherData,
-    "stayDate":stayDate,
-    "weather":weather,
-    "userlist":list,
-    "picture":picdata
+    "weatherData": weatherData,
+    "stayDate": stayDate,
+    "weather": weather,
+    "userlist": list,
+    "picture": picdata
   };
 
-let alltrips;
-  if (JSON.parse(localStorage.getItem("trip"))){
+  let alltrips;
+  if (JSON.parse(localStorage.getItem("trip"))) {
     alltrips = JSON.parse(localStorage.getItem("trip"));
-  }else{
+  } else {
     alltrips = {};
   }
 
@@ -269,46 +281,46 @@ let alltrips;
 
   localStorage.setItem("trip", JSON.stringify(alltrips));
 
-  // console.log(JSON.parse(localStorage.getItem("trip")));
   Client.updatePage.buildTrips();
 
 };
 
-export function updateList(){
-const savebtn = document.querySelectorAll(".save");
-for (let i=0;i<savebtn.length;i++){
-  savebtn[i].addEventListener("click", function(){
-    const list =  event.target.parentNode.querySelector("ul.list").innerHTML;
-    const parent = event.target.closest(".details-container");
-    const tripName = parent.querySelector("h3").innerHTML;
-    const storage = JSON.parse(localStorage.getItem("trip")) || [];
-    // console.log(tripName);
+//Lets user re-save their to-bring list on each trip
+export function updateList() {
+  const savebtn = document.querySelectorAll(".save");
+  for (let i = 0; i < savebtn.length; i++) {
+    savebtn[i].addEventListener("click", function() {
+      const list = event.target.parentNode.querySelector("ul.list").innerHTML;
+      const parent = event.target.closest(".details-container");
+      const tripName = parent.querySelector("h3").innerHTML;
+      const storage = JSON.parse(localStorage.getItem("trip")) || [];
 
-    storage[tripName].userlist = list;
+      storage[tripName].userlist = list;
 
-    localStorage.setItem("trip", JSON.stringify(storage));
-    console.log(JSON.parse(localStorage.getItem("trip")));
+      localStorage.setItem("trip", JSON.stringify(storage));
+      console.log(JSON.parse(localStorage.getItem("trip")));
 
-  })
-}
+    })
+  }
 };
 
-async function storeJPG(picture){
+//creates a DATAURL string to POST to server. This keeps users from taxing Pixabay downloads. 
+async function storeJPG(picture) {
 
-    const preview = picture.url;
+  const preview = picture.url;
 
-    const show = document.createElement("img");
-    show.src = preview;
-    show.crossOrigin = "anonymous";
+  const show = document.createElement("img");
+  show.src = preview;
+  show.crossOrigin = "anonymous";
 
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext("2d");
 
-    canvas.width = picture.width;
-    canvas.height = picture.height;
+  canvas.width = picture.width;
+  canvas.height = picture.height;
 
-    const pixdata = new Promise(function(resolve, reject){
-      show.addEventListener("load", function(){
+  const pixdata = new Promise(function(resolve, reject) {
+    show.addEventListener("load", function() {
       let imgDataUrl;
       context.drawImage(show, 0, 0, picture.width, picture.height);
       imgDataUrl = canvas.toDataURL("image/jpg", .8);
@@ -316,20 +328,19 @@ async function storeJPG(picture){
       const newdata = {
         "id": picture.id,
         "src": imgDataUrl,
-        "tags":picture.tags
+        "tags": picture.tags
       }
       resolve(newdata);
     })
-    });
-    const sendPic = await pixdata;
-      const fordevserver = "http://localhost:3003";
-      fetch(fordevserver+'/store', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sendPic),
-      });
-    return sendPic.id;
+  });
+  const sendPic = await pixdata;
+  fetch('/store', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(sendPic),
+  });
+  return sendPic.id;
 };
